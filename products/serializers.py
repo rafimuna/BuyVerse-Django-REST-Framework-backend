@@ -87,9 +87,16 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
 
     def get_image_url(self, obj):
+    if obj.image and hasattr(obj.image, 'url'):
+        url = obj.image.url
+        # যদি URL ইতোমধ্যে http:// বা https:// দিয়ে শুরু হয় (যেমন Cloudinary-র ক্ষেত্রে)
+        if url.startswith('http://') or url.startswith('https://'):
+            return url
+        
+        # যদি লোকাল/রিলেটিভ পাথ হয় (/media/...), তবে Absolute URI বানিয়ে নিবে
         request = self.context.get('request')
-        if obj.image and hasattr(obj.image, 'url'):
-            if request is not None:
-                return request.build_absolute_uri(obj.image.url)
-            return obj.image.url
-        return None
+        if request is not None:
+            return request.build_absolute_uri(url)
+        return url
+        
+    return None

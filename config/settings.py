@@ -29,8 +29,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'whitenoise.runserver_nostatic', # 🟢 Added for static files
+    'cloudinary_storage',
     'django.contrib.staticfiles',
-    
+    'cloudinary',
     # Custom Apps
     'core',
     'cart',
@@ -69,6 +70,15 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'YOUR_CLOUD_NAME',   # Cloudinary Dashboard থেকে পাবেন
+    'API_KEY': 'YOUR_API_KEY',         # Cloudinary Dashboard থেকে পাবেন
+    'API_SECRET': 'YOUR_API_SECRET'    # Cloudinary Dashboard থেকে পাবেন
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 ROOT_URLCONF = 'config.urls'
 
