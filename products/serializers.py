@@ -1,67 +1,95 @@
-import uuid
 from rest_framework import serializers
 from .models import Product, ProductVariant, Color, Size
 
 
+# 1. Color Serializer
 class ColorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Color
-        fields = '__all__'
+        fields = ['id', 'name', 'hex_code']
 
 
+# 2. Size Serializer
 class SizeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Size
-        fields = '__all__'
+        fields = ['id', 'name']
 
 
+# 3. Product Variant Serializer
 class ProductVariantSerializer(serializers.ModelSerializer):
-    # GET রিকোয়েস্টের সময় কালার ও সাইজের পুরো ডিটেইলস (নামসহ) দেখানোর জন্য
+    # Color এবং Size-এর বিস্তারিত অবজেক্ট (React Dropdown-এর জন্য)
     color_detail = ColorSerializer(source='color', read_only=True)
     size_detail = SizeSerializer(source='size', read_only=True)
+    
+    # Variant Image URL Generator
+    image_url = serializers.SerializerMethodField()
     final_price = serializers.ReadOnlyField()
 
     class Meta:
         model = ProductVariant
         fields = [
             'id',
-            'product',
+            'sku',
+            'price',
+            'discount_price',
+            'final_price',
+            'stock',
             'color',
             'size',
             'color_detail',
             'size_detail',
-            'price',
-            'discount_price',
-            'final_price',
-            'sku',
+            'image',
+            'image_url',
+            'is_active'
         ]
-        # POST/PUT করার সময় 'color' এবং 'size' ID হিসেবে পাঠাতে পারবেন
-        extra_kwargs = {
-            'color': {'write_only': True, 'required': False},
-            'size': {'write_only': True, 'required': False},
-            'sku': {'required': False},
-        }
 
-    def create(self, validated_data):
-        # যদি রিকোয়েস্টে SKU না থাকে, তবে অটোমেটিক ইউনিক SKU তৈরি করবে
-        if not validated_data.get('sku'):
-            product_id = validated_data.get('product').id
-            color_id = validated_data.get('color').id if validated_data.get('color') else '0'
-            size_id = validated_data.get('size').id if validated_data.get('size') else '0'
-            
-            # উদাহরণ: PROD-1-C2-S3-A1B2
-            unique_suffix = uuid.uuid4().hex[:4].upper()
-            validated_data['sku'] = f"SKU-{product_id}-C{color_id}-S{size_id}-{unique_suffix}"
-
-        return super().create(validated_data)
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image and hasattr(obj.image, 'url'):
+            if request is not None:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
 
 
+# 4. Main Product Serializer
 class ProductSerializer(serializers.ModelSerializer):
-    # প্রোডাক্টের সাথে সম্পর্কিত সব ভ্যারিয়েন্ট লোড করার জন্য
-    # (আপনার Product মডেলে ProductVariant-এর related_name='variants' থাকতে হবে)
+    # প্রোডাক্টের সব ভ্যারিয়েন্ট একসাথে লোড করা
     variants = ProductVariantSerializer(many=True, read_only=True)
+    
+    # Model @property থেকে আসা final_price
     final_price = serializers.ReadOnlyField()
+    
+    # Main Product Image URL Generator
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = '__all__'
+        fields = [
+            'id',
+            'name',
+            'slug',
+            'category',
+            'description',
+            'price',
+            'discount_price',
+            'final_price',
+            'stock',
+            'sku',
+            'image',
+            'image_url',       # 👈 React component এই key খুঁজবে
+            'is_featured',
+            'is_active',
+            'variants',        # 👈 React component-এর variants array
+            'created_at',
+            'updated_at'
+        ]
+
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image and hasattr(obj.image, 'url'):
+            if request is not None:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
