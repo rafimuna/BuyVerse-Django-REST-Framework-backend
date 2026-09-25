@@ -155,7 +155,8 @@ CORS_ALLOW_HEADERS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://*.onrender.com",  # Render subdomain-এর জন্য
+    'https://6ab533ed70bdf41d67a5363f--euphonious-smakager-98a404.netlify.app/',
+    "https://buyverse-django-rest-framework-backend.onrender.com",  # Render subdomain-এর জন্য
 ]
 
 # Email
