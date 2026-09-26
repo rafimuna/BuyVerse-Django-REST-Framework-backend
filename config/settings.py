@@ -73,9 +73,9 @@ MIDDLEWARE = [
 
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'YOUR_CLOUD_NAME',   # Cloudinary Dashboard থেকে পাবেন
-    'API_KEY': 'YOUR_API_KEY',         # Cloudinary Dashboard থেকে পাবেন
-    'API_SECRET': 'YOUR_API_SECRET'    # Cloudinary Dashboard থেকে পাবেন
+    'CLOUD_NAME': 'zqp82cnx',   # Cloudinary Dashboard থেকে পাবেন
+    'API_KEY': '865743662742877',         # Cloudinary Dashboard থেকে পাবেন
+    'API_SECRET': 'MFQ3_DvZVm5pj2yuCMtcxxXWWwY'    # Cloudinary Dashboard থেকে পাবেন
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
@@ -165,7 +165,7 @@ CORS_ALLOW_HEADERS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    'https://6ab533ed70bdf41d67a5363f--euphonious-smakager-98a404.netlify.app/',
+    'https://6ab533ed70bdf41d67a5363f--euphonious-smakager-98a404.netlify.app',
     "https://buyverse-django-rest-framework-backend.onrender.com",  # Render subdomain-এর জন্য
 ]
 
