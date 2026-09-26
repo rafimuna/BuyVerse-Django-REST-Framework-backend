@@ -6,13 +6,11 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 1. SECURITY & ENVIRONMENT CONFIGS
-# Render-এর Environment Variables থেকে Secret Key নেবে, না পেলে ডিফল্টটা ব্যবহার করবে
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-j56rjv(a4&&t(o4qt^u+=rz0a-ye7wpw+%dx!%cbc&tiq5vp+=')
 
-# Render-এ ডেপ্লয় করলে অটোমেটিক False হয়ে যাবে, লোকালি True থাকবে
 DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = ['*']  # Render Hostname অটোমেটিক হ্যান্ডেল করার জন্য
+ALLOWED_HOSTS = ['*']
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -28,11 +26,12 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
+    
+    # Cloudinary Storage
     'cloudinary_storage',
-   
     'cloudinary',
+
     # Custom Apps
     'core',
     'cart',
@@ -63,7 +62,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # 🟢 Must be placed right below SecurityMiddleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Must be right below SecurityMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -74,9 +73,9 @@ MIDDLEWARE = [
 
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'zqp82cnx',   # Cloudinary Dashboard থেকে পাবেন
-    'API_KEY': '865743662742877',         # Cloudinary Dashboard থেকে পাবেন
-    'API_SECRET': 'MFQ3_DvZVm5pj2yuCMtcxxXWWwY'    # Cloudinary Dashboard থেকে পাবেন
+    'CLOUD_NAME': 'zqp82cnx',
+    'API_KEY': '865743662742877',
+    'API_SECRET': 'MFQ3_DvZVm5pj2yuCMtcxxXWWwY',
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
@@ -102,7 +101,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # 3. DATABASE CONFIGURATION
-# Render-এর DATABASE_URL থাকলে PostgreSQL ব্যবহার করবে, না থাকলে SQLite3 (Local)
 DATABASES = {
     'default': dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
@@ -130,7 +128,9 @@ USE_TZ = True
 # 4. STATIC & MEDIA FILES CONFIGURATION
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Safe WhiteNoise Storage
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -151,7 +151,7 @@ REST_FRAMEWORK = {
 
 
 # 6. CORS & SECURITY CONFIGS
-CORS_ALLOW_ALL_ORIGINS = True  # Production-এ চাইলে নির্দিষ্ট ফ্রন্টএন্ড ডোমেইন দিয়ে দিতে পারেন
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_HEADERS = [
     "accept",
@@ -162,12 +162,11 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-# CSRF Trusted Origins (Render & Frontend Domain)
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    'https://6ab533ed70bdf41d67a5363f--euphonious-smakager-98a404.netlify.app',
-    "https://buyverse-django-rest-framework-backend.onrender.com",  # Render subdomain-এর জন্য
+    "https://6ab533ed70bdf41d67a5363f--euphonious-smakager-98a404.netlify.app",
+    "https://buyverse-django-rest-framework-backend.onrender.com",
 ]
 
 # Email
