@@ -73,11 +73,10 @@ MIDDLEWARE = [
 
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'zqp82cnx',
-    'API_KEY': '865743662742877',
-    'API_SECRET': 'MFQ3_DvZVm5pj2yuCMtcxxXWWwY',
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'zqp82cnx'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '865743662742877'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'MFQ3_DvZVm5pj2yuCMtcxxXWWwY'),
 }
-
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 ROOT_URLCONF = 'config.urls'
